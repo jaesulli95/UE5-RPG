@@ -114,6 +114,15 @@ public:
 		}
 	}
 
+	//TODO:: FIX BUG WITH Swapping to an index that doesnt have an item.
+	void SwapIndexes(FName _SILN, int32 Sindex, FName _DILN, int32 Dindex) {
+		ItemMetaData[_SILN].Indexes.Remove(Sindex);
+		ItemMetaData[_DILN].Indexes.Add(Sindex);
+
+		ItemMetaData[_DILN].Indexes.Remove(Dindex);
+		ItemMetaData[_SILN].Indexes.Add(Dindex);
+	}
+
 	//DEBUGGING FUNCTIONS
 	void DBG_PrintInfo(FName ItemLookup) {
 		if (ItemMetaData.Contains(ItemLookup)) {

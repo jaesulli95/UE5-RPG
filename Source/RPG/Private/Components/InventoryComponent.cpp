@@ -93,7 +93,11 @@ bool UInventoryComponent::GetItemRemovals(FName ItemLookup, int32 Quantity, TArr
 	return true;
 }
 void UInventoryComponent::SwapItems(int32 Source, int32 Dest)
-{
+{	
+	FName SourceILN = Items[Source]->ItemLookupName;
+	FName DestILN = Items[Dest]->ItemLookupName;
+	
+	InventoryMetaData.SwapIndexes(SourceILN, Source, DestILN, Dest);
 
 	//Just Need to do the Swap function here for Inventory Meta Data;
 	UItems* TmpItem = Items[Source];
@@ -107,13 +111,16 @@ bool UInventoryComponent::StackItem(int32 Source, int32 Dest)
 	}
 	int32 QuantityTotal = Items[Source]->CurrentQuantity + Items[Dest]->CurrentQuantity;
 	if (QuantityTotal < Items[Dest]->MaxQuantity) {
-		Items[Dest]->CurrentQuantity += Items[Source]->CurrentQuantity;
+		int32 AddedQuantity = Items[Source]->CurrentQuantity;
+		Items[Dest]->CurrentQuantity += AddedQuantity;
 		RemoveItem(Source);
+		InventoryMetaData.AddToTotal(Items[Dest]->ItemLookupName, AddedQuantity);
 		ItemUpdated.Broadcast(Dest, Items[Dest]);
 		return true;
 	}
 	return false;
 }
+
 void UInventoryComponent::Drop(int32 Source, int32 Dest)
 {
 	if (Items[Source]->Id == Items[Dest]->Id) {
